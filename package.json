@@ -1,0 +1,22 @@
+{
+  "name": "covid-19-daily-subscription",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chuloroh/COVID-19-Daily-Subscription.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chuloroh/COVID-19-Daily-Subscription/issues"
+  },
+  "homepage": "https://github.com/chuloroh/COVID-19-Daily-Subscription#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
