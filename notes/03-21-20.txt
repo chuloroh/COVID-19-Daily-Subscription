@@ -1,0 +1,38 @@
+Problems that we're solving
+1. make data more consumable and easily accessible
+2. central place for covid-19 data
+
+Features
+1. subscribe to covid-19 data snapshots
+2. displays covid-19 data as a graph
+
+What we need
+
+1. Simple Email Service (AWS SES)
+
+2. Relational Data Service (AWS RDS)
+
+3. Elastic Compute Cloud (AWS EC2)
+    1. Node JS
+    2. React
+    3. D3 JS
+
+Work breakdown (timebox)
+
+Local
+React application
+D3 JS build a graph
+
+Infrastructure
+1. Get EC2 instance up and running with Node JS
+2. Build API for email subscription (stores email address to RDS)
+3. Build API to deliver COVID-19 Data based on location
+
+## Follow ups
+* Find best practices for storing pem keys.
+* Setup pm 2
+* How to get rid of port 3000 from showing up.
+
+## Good to have
+* Get free DNS names?
+  * Set DNS name on ec2 instance.
