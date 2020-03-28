@@ -1,7 +1,14 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
+const routes = require('./routes')
 
-app.get('/', (req, res) => res.send('Hello World!'))
+app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use('/services', routes);
+
+app.get('/', (req, res) => res.send('Hello World!'));
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
