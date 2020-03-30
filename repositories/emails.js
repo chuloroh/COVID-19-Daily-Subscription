@@ -1,19 +1,22 @@
-const { withConnection } = require('../database/connection');
+const { withDatabaseConnection } = require('../database/connection');
 
 module.exports = {
   createEmail({ emailAddress }) {
-    withConnection(connection => {
+    withDatabaseConnection(connection => {
       const emailSet = { value: emailAddress };
 
-      connection.query('SELECT value FROM emails WHERE value = ?', emailAddress, (errors, results, fields) => {
+      connection.query('SELECT value FROM emails WHERE value = ?', emailAddress, (error, results, fields) => {
         if (results.length) {
-          throw `The provided email address already exists. (${emailAddress})`;
+          throw `The provided email address already exists '${emailAddress}'`;
         }
-      })
+      });
 
-      connection.query('INSERT INTO emails SET ?', emailSet, (errors, results, fields) => {
-        console.log({
-          errors,
+      connection.query('INSERT INTO emails SET ?', emailSet, (error, results, fields) => {
+        if (error) {
+          throw error;
+        }
+        
+        console.info({
           results,
           fields
         });

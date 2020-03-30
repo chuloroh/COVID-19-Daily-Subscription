@@ -6,8 +6,6 @@ const defaultConnectionVars = {
   password : process.env.MYSQL_PASSWORD,
 };
 
-console.info({ defaultConnectionVars });
-
 const serverConnection = mysql.createConnection(defaultConnectionVars);
 
 const databaseConnection = mysql.createConnection({

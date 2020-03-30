@@ -21,42 +21,37 @@ const runMigrations = () => {
       return { rawSql, useDatabase, migration };
     });
 
-    const databaseMigrations = migrations.filter(({ useDatabase }) => !useDatabase);
-    const tableMigrations = migrations.filter(({ useDatabase }) => useDatabase);
+    // Takes a list of migrations, which are objects composed of `rawSql` string and
+    // `migration` name. Returns a new function that takes in a connection. This will
+    // likely be a connection to the server or a specific database.
+    const runMigrationsWithQuery = (migrations) => {
+      return (connection) => {
+        migrations.forEach(({ rawSql, migration }) => {
+          console.info(`Running migration '${migration}'`);
 
-    withServerConnection((connection) => {
-      databaseMigrations.forEach(({ rawSql, migration }) => {
-        console.info(`Running migration '${migration}'`);
+          connection.query(rawSql, (error, results, fields) => {
+            if (error) {
+              console.info({ rawSql })
+              
+              throw error;
+            }
 
-        console.log({ rawSql })
-
-        connection.query(rawSql, (error, results, fields) => {
-          if (error) {
-            throw error;
-          }
-
-          console.info(`Successfully ran '${migration}`);
-          console.info({ results, fields });
+            console.info(`Successfully ran '${migration}`);
+            console.info({ results, fields });
+          });
         });
-      });
-    });
+      };
+    };
 
-    withDatabaseConnection((connection) => {
-      tableMigrations.forEach(({ rawSql, migration }) => {
-        console.info(`Running migration '${migration}'`);
+    // Raw SQL Queries to create databases
+    withServerConnection(runMigrationsWithQuery(
+      migrations.filter(({ useDatabase }) => !useDatabase)
+    ));
 
-        console.log({ rawSql })
-
-        connection.query(rawSql, (error, results, fields) => {
-          if (error) {
-            throw error;
-          }
-
-          console.info(`Successfully ran '${migration}`);
-          console.info({ results, fields });
-        });
-      });
-    });
+    // Run Raw SQL Queries to create tables
+    withDatabaseConnection(runMigrationsWithQuery(
+      migrations.filter(({ useDatabase }) => useDatabase)
+    ));
   });
 };
 
