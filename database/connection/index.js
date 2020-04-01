@@ -1,35 +1,38 @@
 const mysql = require('mysql');
 
 const defaultConnectionVars = {
-  host     : process.env.MYSQL_HOSTNAME,
-  user     : process.env.MYSQL_USERNAME,
-  password : process.env.MYSQL_PASSWORD,
+  connectionLimit: 10,
+  host           : process.env.MYSQL_HOSTNAME,
+  user           : process.env.MYSQL_USERNAME,
+  password       : process.env.MYSQL_PASSWORD,
 };
 
-const serverConnection = mysql.createConnection(defaultConnectionVars);
+const serverPool = mysql.createPool(defaultConnectionVars);
 
-const databaseConnection = mysql.createConnection({
+const databasePool = mysql.createPool({
   ...defaultConnectionVars,
   database : process.env.MYSQL_DATABASE
 });
 
-const _withConnection = (connection) => {
+const _withConnection = (pool) => {
   return (transaction) => {
-    connection.connect((error) => {
-      if (error) {
-        throw error;
-      }
+    return new Promise((resolve, reject) => {
+      pool.getConnection((error, connection) => {
+        console.log('connected as id ' + connection.threadId);
+        
+        if (error) {
+          throw error;
+        }
 
-      console.log('connected as id ' + connection.threadId);
+        transaction(connection, resolve, reject);
+
+        connection.release();
+      });
     });
-
-    transaction(connection);
-
-    connection.end()
   };
 };
 
 module.exports = {
-  withServerConnection: _withConnection(serverConnection),
-  withDatabaseConnection: _withConnection(databaseConnection)
+  withServerConnection: _withConnection(serverPool),
+  withDatabaseConnection: _withConnection(databasePool)
 };
